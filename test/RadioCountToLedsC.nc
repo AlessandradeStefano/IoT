@@ -9,7 +9,7 @@ module RadioCountToLedsC @safe() {
     interface AMSend;
     interface Timer<TMilli> as MilliTimer0;
     interface Timer<TMilli> as MilliTimer1;
-    interface Timer<TMilli> as MilliTimer2;
+    // interface Timer<TMilli> as MilliTimer2;
     interface SplitControl as AMControl;
     interface Packet;
   }
@@ -21,12 +21,17 @@ implementation {
   bool locked;
   uint8_t connected[9] = {0,0,0,0,0,0,0,0,0};
   
+  void sendCONNACK(uint16_t sender_ID);
+  
   event void Boot.booted() {
     call AMControl.start();
   }
 
   event void AMControl.startDone(error_t err) {
     if (err == SUCCESS) {
+      uint8_t id = TOS_NODE_ID;
+      printf("id: %d \n", id);
+      printfflush();
       call MilliTimer0.startOneShot(1000);
     }
     else {
@@ -67,8 +72,8 @@ implementation {
       return;
     }
     else {
-      if (TOS_NODE_ID != 0){
-        if (connected[TOS_NODE_ID] != 2) call MilliTimer0.startOneShot(1000); // try reconnect
+      if (TOS_NODE_ID != 1){
+        if (connected[TOS_NODE_ID-1] != 2) call MilliTimer0.startOneShot(1000); // try reconnect
       }
     }
   }
@@ -79,17 +84,17 @@ implementation {
     else {
       radio_count_msg_t* rcm_r = (radio_count_msg_t*)payload;
       /** PANC **/
-      if (TOS_NODE_ID == 0){
+      if (TOS_NODE_ID == 1){
         if (rcm_r->messageType == 0) { // if receive CONNECT
           uint16_t sender = rcm_r->sender_ID;
-          connected[sender] = 1;
+          connected[sender-1] = 1;
           sendCONNACK(sender);
         }
 
       /** WORKER **/
       } else {
-        if (rcm->messageType == 1 && connected[TOS_NODE_ID] = 1) { // if receive CONNACK 
-          connected[TOS_NODE_ID] = 2;
+        if ((rcm_r->messageType == 1) && (connected[TOS_NODE_ID-1] = 1)) { // if receive CONNACK 
+          connected[TOS_NODE_ID-1] = 2;
           call Leds.led0Toggle();
         }
         
@@ -105,7 +110,7 @@ implementation {
     }
   }
 
-  void sendCONNACK(uint16_t sender){
+  void sendCONNACK(uint16_t sender_ID){
           radio_count_msg_t* rcm = (radio_count_msg_t*)call Packet.getPayload(&packet, sizeof(radio_count_msg_t));
           if (rcm == NULL) return;
 

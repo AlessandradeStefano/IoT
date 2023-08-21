@@ -6,7 +6,7 @@ typedef nx_struct radio_count_msg {
     nx_uint16_t sender_ID;
     nx_uint16_t destination;
     nx_uint8_t topic;
-    nx_uit8_t payload;
+    nx_uint8_t payload;
 } radio_count_msg_t;
 
     /*
