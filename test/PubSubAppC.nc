@@ -30,10 +30,16 @@ implementation {
 
   event void AMControl.startDone(error_t err) {
     if (err == SUCCESS) {
-      call MilliTimer0.startOneShot(TOS_NODE_ID * 1000);
+
+      printf("radio on\n");
+      printfflush();
+      
+      call MilliTimer0.startOneShot(1000);
     }
     else {
       call AMControl.start();
+      printf("radio fail, id %d\n", TOS_NODE_ID);
+      printfflush();
     }
   }
 
@@ -43,8 +49,6 @@ implementation {
   
   // Fired after first boot, start CONNECT procedure
   event void MilliTimer0.fired() {
-  	printf("node %d connected", TOS_NODE_ID);
-      	  printfflush();
     if (locked) {
       return;
     }
@@ -58,6 +62,9 @@ implementation {
         rcm->messageType = 0;
         rcm->destination = 1;
         rcm->payload = 0;
+        
+        printf("sending CONNECT\n");
+       	printfflush();
 
         if (call AMSend.send(1, &packet, sizeof(radio_count_msg_t)) == SUCCESS) {
           locked = TRUE;
@@ -96,9 +103,11 @@ implementation {
       } else {
         if ((rcm_r->messageType == 1) && (connected[TOS_NODE_ID-1] = 1)) { // if receive CONNACK 
           connected[TOS_NODE_ID-1] = 2;
-          printf("node ");
-      	  printfflush();
-          call Leds.led0Toggle();
+          
+          printf("node connected\n");
+       	  printfflush();
+       	  
+          call Leds.led1Toggle();
         }
         
       }
@@ -120,7 +129,9 @@ implementation {
           rcm->sender_ID = TOS_NODE_ID;
           rcm->messageType = 1;
           rcm->destination = sender_ID;
-          rcm->payload = 1;
+          
+          printf("sending CONNACK\n");
+       	  printfflush();
 
           if (call AMSend.send(sender_ID, &packet, sizeof(radio_count_msg_t)) == SUCCESS) {
             locked = TRUE;
