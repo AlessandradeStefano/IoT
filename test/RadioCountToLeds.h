@@ -30,7 +30,6 @@
 #undef putchar
 
 #include "message.h"
-#include "printf.h"
 int printfflush();
 
 #ifndef PRINTF_MSG_LENGTH

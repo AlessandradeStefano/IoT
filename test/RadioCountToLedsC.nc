@@ -1,9 +1,8 @@
 #include "Timer.h"
 #include "RadioCountToLeds.h"
 #include <string.h>
-#include "printf.h"
 
-module RadioCountToLedsC @safe() {
+module RadioCountToLedsC {
   uses {
     interface Leds;
     interface Boot;
@@ -44,6 +43,8 @@ implementation {
   
   // Fired after first boot, start CONNECT procedure
   event void MilliTimer0.fired() {
+  	printf("node %d connected", TOS_NODE_ID);
+      	  printfflush();
     if (locked) {
       return;
     }
@@ -56,6 +57,7 @@ implementation {
         rcm->sender_ID = TOS_NODE_ID;
         rcm->messageType = 0;
         rcm->destination = 1;
+        rcm->payload = 0;
 
         if (call AMSend.send(1, &packet, sizeof(radio_count_msg_t)) == SUCCESS) {
           locked = TRUE;
@@ -78,7 +80,7 @@ implementation {
   }
 
   event message_t* Receive.receive(message_t* bufPtr, void* payload, uint8_t len) {
-    
+
     if (len != sizeof(radio_count_msg_t)) {return bufPtr;}
     else {
       radio_count_msg_t* rcm_r = (radio_count_msg_t*)payload;
@@ -94,6 +96,8 @@ implementation {
       } else {
         if ((rcm_r->messageType == 1) && (connected[TOS_NODE_ID-1] = 1)) { // if receive CONNACK 
           connected[TOS_NODE_ID-1] = 2;
+          printf("node ");
+      	  printfflush();
           call Leds.led0Toggle();
         }
         
@@ -116,6 +120,7 @@ implementation {
           rcm->sender_ID = TOS_NODE_ID;
           rcm->messageType = 1;
           rcm->destination = sender_ID;
+          rcm->payload = 1;
 
           if (call AMSend.send(sender_ID, &packet, sizeof(radio_count_msg_t)) == SUCCESS) {
             locked = TRUE;
