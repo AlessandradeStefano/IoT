@@ -31,8 +31,7 @@ implementation {
 
   event void AMControl.startDone(error_t err) {
     if (err == SUCCESS) {
-      uint8_t id = TOS_NODE_ID;
-      call MilliTimer0.startOneShot(1000);
+      call MilliTimer0.startOneShot(TOS_NODE_ID * 1000);
     }
     else {
       call AMControl.start();
@@ -50,15 +49,15 @@ implementation {
     }
     else {
       // if worker node, send CONNECT message to PANC 
-      if (TOS_NODE_ID != 0){
+      if (TOS_NODE_ID != 1){
         radio_count_msg_t* rcm = (radio_count_msg_t*)call Packet.getPayload(&packet, sizeof(radio_count_msg_t));
         if (rcm == NULL) return;
 
         rcm->sender_ID = TOS_NODE_ID;
         rcm->messageType = 0;
-        rcm->destination = 0;
+        rcm->destination = 1;
 
-        if (call AMSend.send(0, &packet, sizeof(radio_count_msg_t)) == SUCCESS) {
+        if (call AMSend.send(1, &packet, sizeof(radio_count_msg_t)) == SUCCESS) {
           locked = TRUE;
         }
       }
