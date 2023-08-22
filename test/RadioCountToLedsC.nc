@@ -1,5 +1,6 @@
 #include "Timer.h"
 #include "RadioCountToLeds.h"
+#include <string.h>
 
 module RadioCountToLedsC @safe() {
   uses {

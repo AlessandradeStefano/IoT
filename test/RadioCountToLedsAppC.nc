@@ -1,3 +1,5 @@
+#define NEW_PRINTF_SEMANTICS
+#include <string.h>
 #include "RadioCountToLeds.h"
 
 /**
