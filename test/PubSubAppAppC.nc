@@ -1,9 +1,9 @@
 #define NEW_PRINTF_SEMANTICS
-#include "RadioCountToLeds.h"
+#include "PubSubApp.h"
 
-configuration RadioCountToLedsAppC {}
+configuration PubSubAppAppC {}
 implementation {
-  components MainC, RadioCountToLedsC as App, LedsC;
+  components MainC, PubSubAppC as App, LedsC;
   components PrintfC;
   components SerialStartC;
   components new AMSenderC(AM_RADIO_COUNT_MSG);

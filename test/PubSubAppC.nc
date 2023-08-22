@@ -1,8 +1,8 @@
 #include "Timer.h"
-#include "RadioCountToLeds.h"
+#include "PubSubApp.h"
 #include <string.h>
 
-module RadioCountToLedsC {
+module PubSubAppC {
   uses {
     interface Leds;
     interface Boot;

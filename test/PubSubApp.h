@@ -45,8 +45,8 @@ enum {
 
 #endif //PRINTF_H
 
-#ifndef RADIO_COUNT_TO_LEDS_H
-#define RADIO_COUNT_TO_LEDS_H
+#ifndef PUB_SUB_APP_H
+#define PUB_SUB_APP_H
 
 typedef nx_struct radio_count_msg {
   nx_uint8_t messageType;
