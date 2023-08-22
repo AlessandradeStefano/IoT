@@ -1,6 +1,7 @@
 #include "Timer.h"
 #include "RadioCountToLeds.h"
 #include <string.h>
+#include "printf.h"
 
 module RadioCountToLedsC @safe() {
   uses {
@@ -31,8 +32,6 @@ implementation {
   event void AMControl.startDone(error_t err) {
     if (err == SUCCESS) {
       uint8_t id = TOS_NODE_ID;
-      printf("id: %d \n", id);
-      printfflush();
       call MilliTimer0.startOneShot(1000);
     }
     else {

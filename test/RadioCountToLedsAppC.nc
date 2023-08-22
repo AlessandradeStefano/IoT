@@ -1,6 +1,7 @@
 #define NEW_PRINTF_SEMANTICS
 #include <string.h>
 #include "RadioCountToLeds.h"
+#include "printf.h"
 
 /**
  * Configuration for the RadioCountToLeds application. RadioCountToLeds 
@@ -22,6 +23,7 @@ implementation {
   components new TimerMilliC() as Timer1;
   // components new TimerMilliC() as Timer2;
   components ActiveMessageC;
+  components PrintfC;
   
   App.Boot -> MainC.Boot;
   
