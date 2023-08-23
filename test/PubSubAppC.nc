@@ -111,7 +111,7 @@ implementation {
     else {
       PUB_TOPIC = (TOS_NODE_ID-1) % 3;
       random = (call Random.rand16() % 100);
-      sendPUB(PUB_TOPIC, payload, 1);
+      sendPUB(PUB_TOPIC, random, 1);
     }
   }
 
