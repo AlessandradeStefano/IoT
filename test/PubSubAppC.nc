@@ -11,6 +11,7 @@ module PubSubAppC {
     interface Timer<TMilli> as MilliTimer0;
     interface Timer<TMilli> as MilliTimer1;
     interface Timer<TMilli> as MilliTimer2;
+    interface Timer<TMilli> as MilliTimer3;
     interface SplitControl as AMControl;
     interface Packet;
   }

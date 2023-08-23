@@ -11,6 +11,7 @@ implementation {
   components new TimerMilliC() as Timer0;
   components new TimerMilliC() as Timer1;
   components new TimerMilliC() as Timer2;
+  components new TimerMilliC() as Timer3;
   components ActiveMessageC;
 
   
@@ -23,6 +24,7 @@ implementation {
   App.MilliTimer0 -> Timer0;
   App.MilliTimer1 -> Timer1;
   App.MilliTimer2 -> Timer2;
+  App.MilliTimer3 -> Timer3;
   App.Packet -> AMSenderC;
 }
 
