@@ -148,7 +148,6 @@ implementation {
           if (rcm_r->topic == 0) temperature[sender-2] = 1;
           else if (rcm_r->topic == 1) humidity[sender-2] = 1;
           else if (rcm_r->topic == 2) luminosity[sender-2] = 1;
-          }
           sendACK(sender, 3);
         }
 
