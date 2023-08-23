@@ -23,8 +23,8 @@ implementation {
 
   uint8_t connected[9] = {0,0,0,0,0,0,0,0,0};
 
-  bool sub = false;
-  bool second_sub = false;
+  bool sub = FALSE;
+  bool second_sub = FALSE;
   // topics: 1 if node i+2 is subscribed, 0 otherwise
   uint8_t temperature[8] = {0,0,0,0,0,0,0,0};
   uint8_t humidity[8] = {0,0,0,0,0,0,0,0};
@@ -116,10 +116,10 @@ implementation {
     }
     else {
       if (TOS_NODE_ID != 1){
-        if (sub == false) call MilliTimer2.startOneShot(1000); // try reconnection
-        else if ((TOS_NODE_ID % 3 == 0) && second_sub == false) {
-          sub = false;
-          second_sub = true;
+        if (sub == FALSE) call MilliTimer2.startOneShot(1000); // try reconnection
+        else if ((TOS_NODE_ID % 3 == 0) && second_sub == FALSE) {
+          sub = FALSE;
+          second_sub = TRUE;
           call MilliTimer2.startOneShot(10000); 
         }
       }
@@ -167,7 +167,7 @@ implementation {
           call MilliTimer2.startOneShot(10000);
 
         } else if (rcm_r->messageType == 3) { // receive SUBACK 
-          sub = true;
+          sub = TRUE;
 
           printf("node subscribed\n");
        	  printfflush();
