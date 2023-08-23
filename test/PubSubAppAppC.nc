@@ -12,7 +12,9 @@ implementation {
   components new TimerMilliC() as Timer1;
   components new TimerMilliC() as Timer2;
   components new TimerMilliC() as Timer3;
+  components new TimerMilliC() as Timer4;
   components ActiveMessageC;
+  components RandomC;
 
   
   App.Boot -> MainC.Boot;
@@ -25,7 +27,9 @@ implementation {
   App.MilliTimer1 -> Timer1;
   App.MilliTimer2 -> Timer2;
   App.MilliTimer3 -> Timer3;
+  App.MilliTimer4 -> Timer4;
   App.Packet -> AMSenderC;
+  App.Random -> RandomC;
 }
 
 

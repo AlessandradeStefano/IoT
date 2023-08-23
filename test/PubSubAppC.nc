@@ -12,8 +12,10 @@ module PubSubAppC {
     interface Timer<TMilli> as MilliTimer1;
     interface Timer<TMilli> as MilliTimer2;
     interface Timer<TMilli> as MilliTimer3;
+    interface Timer<TMilli> as MilliTimer4;
     interface SplitControl as AMControl;
     interface Packet;
+    interface Random;
   }
 }
 implementation {
@@ -30,10 +32,17 @@ implementation {
   uint8_t temperature[8] = {0,0,0,0,0,0,0,0};
   uint8_t humidity[8] = {0,0,0,0,0,0,0,0};
   uint8_t luminosity[8] = {0,0,0,0,0,0,0,0};
+
+  uint8_t PUB_TOPIC = (TOS_NODE_ID-1) % 3;
+  uint8_t SUB_TOPIC = TOS_NODE_ID % 3;
+  uint8_t NUM_NODES = 8;
+
+  uint8_t random;
   
   void sendACK(uint16_t sender_ID, uint8_t type);
   void sendCON();
   void sendSUB(uint8_t topic);
+  void sendPUB(uint8_t topic, uint8_t payload, uint16_t destination);
   
   event void Boot.booted() {
     call AMControl.start();
@@ -94,6 +103,17 @@ implementation {
     }
   }
 
+  // start PUBLISH procedure
+  event void MilliTimer4.fired() {
+    if (locked) {
+      return;
+    }
+    else {
+      random = (call Random.rand16() % 100);
+      sendPUB(PUB_TOPIC, payload, 1);
+    }
+  }
+
 
 
   /*** RETRANSMISSION PROCEDURES ***/  
@@ -149,19 +169,27 @@ implementation {
           else if (rcm_r->topic == 1) humidity[sender-2] = 1;
           else if (rcm_r->topic == 2) luminosity[sender-2] = 1;
           sendACK(sender, 3);
+        } else if (rcm_r->messageType == 4 && connected[sender-1]) { // receive PUBLISH
+          int i;
+          for (i = 0; i < NUM_NODES; i++){
+            if ((rcm_r->topic == 0) && temperature[i] == 1) sendPUB(rcm_r->topic, rcm_r->payload, i+2);
+            if ((rcm_r->topic == 1) && humidity[i] == 1) sendPUB(rcm_r->topic, rcm_r->payload, i+2);
+            if ((rcm_r->topic == 2) && luminosity[i] == 1) sendPUB(rcm_r->topic, rcm_r->payload, i+2);
+          }
         }
 
+      }
 
 
       /** WORKER **/
-      } else {
+      else {
         if (rcm_r->messageType == 1) { // receive CONNACK 
           connected[TOS_NODE_ID-1] = 1;
           
           printf("node connected\n");
        	  printfflush();
        	  
-          call Leds.led1Toggle();
+          call Leds.led1On();
 
           // subscribe to a topic
           call MilliTimer2.startOneShot(10000);
@@ -172,8 +200,17 @@ implementation {
           printf("node subscribed\n");
        	  printfflush();
 
-          call Leds.led2Toggle();
+          call Leds.led2On();
 
+          // periodically publish to a topic
+          call MilliTimer4.startPeriodic(20000);
+        } else if (rcm_r->messageType == 4) { // receive PUBLISH
+
+          printf("received PUB (topic: %d)", rcm_r->topic);
+       	  printfflush();
+          
+          call Leds.led0On();
+          call Leds.led0Off();
         }
         
       }
@@ -220,18 +257,36 @@ implementation {
           }
   }
 
-  void sendACK(uint16_t sender_ID, uint8_t type){
+  void sendACK(uint16_t destination, uint8_t type){
           radio_count_msg_t* rcm = (radio_count_msg_t*)call Packet.getPayload(&packet, sizeof(radio_count_msg_t));
           if (rcm == NULL) return;
 
           rcm->sender_ID = TOS_NODE_ID;
           rcm->messageType = type;
-          rcm->destination = sender_ID;
+          rcm->destination = destination;
           
           printf("sending ACK (%d)\n", type);
        	  printfflush();
 
-          if (call AMSend.send(sender_ID, &packet, sizeof(radio_count_msg_t)) == SUCCESS) {
+          if (call AMSend.send(destination, &packet, sizeof(radio_count_msg_t)) == SUCCESS) {
+            locked = TRUE;
+          }
+  }
+
+  void sendPUB(uint8_t topic, uint8_t payload, uint16_t destination){
+          radio_count_msg_t* rcm = (radio_count_msg_t*)call Packet.getPayload(&packet, sizeof(radio_count_msg_t));
+          if (rcm == NULL) return;
+
+          rcm->messageType = 4;
+          rcm->sender_ID = TOS_NODE_ID;
+          rcm->destination = destination;
+          rcm->topic = topic;
+          rcm->payload = payload;
+          
+          printf("sending PUB (topic: %d)\n", topic);
+       	  printfflush();
+
+          if (call AMSend.send(destination, &packet, sizeof(radio_count_msg_t)) == SUCCESS) {
             locked = TRUE;
           }
   }
