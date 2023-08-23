@@ -50,23 +50,33 @@ enum {
 
 typedef nx_struct radio_count_msg {
   nx_uint8_t messageType;
-    nx_uint16_t sender_ID;
-    nx_uint16_t destination;
-    nx_uint8_t topic;
-    nx_uint8_t payload;
+  nx_uint16_t sender_ID;
+  nx_uint16_t destination;
+  nx_uint8_t topic;
+  nx_uint8_t payload;
 } radio_count_msg_t;
-
-    /*
-    CONNECT = 0
-    CONNACK = 1
-    SUBSCRIBE = 2
-    SUBACK = 3
-    PUBLISH = 4
-    ACK = 5
-    */
 
 enum {
   AM_RADIO_COUNT_MSG = 6,
 };
 
 #endif
+
+    /*
+
+    ++++ MSG TYPE ++++
+    + CONNECT = 0    +
+    + CONNACK = 1    +
+    + SUBSCRIBE = 2  +
+    + SUBACK = 3     +
+    + PUBLISH = 4    +
+    + ACK = 5        +
+    ++++++++++++++++++
+
+    ++++++ TOPIC ++++++
+    + TEMPERATURE = 0 +
+    + HUMIDITY = 1    +
+    + LUMINOSITY = 2  +
+    +++++++++++++++++++
+
+    */
