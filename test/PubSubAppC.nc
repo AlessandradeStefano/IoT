@@ -33,8 +33,8 @@ implementation {
   uint8_t humidity[8] = {0,0,0,0,0,0,0,0};
   uint8_t luminosity[8] = {0,0,0,0,0,0,0,0};
 
-  uint8_t PUB_TOPIC = (TOS_NODE_ID-1) % 3;
-  uint8_t SUB_TOPIC = TOS_NODE_ID % 3;
+  uint8_t SUB_TOPIC; // TOS_NODE_ID % 3
+  uint8_t PUB_TOPIC; // TOS_NODE_ID-1 % 3
   uint8_t NUM_NODES = 8;
 
   uint8_t random;
@@ -95,8 +95,9 @@ implementation {
     }
     else {
       // each node subscribes to a topic based on his ID
-      uint8_t topic = (TOS_NODE_ID % 3); 
-      if (second_sub && (TOS_NODE_ID % 3 == 0)) topic = 1; // if subscribed to TEMPERATURE, subscribe also to HUMIDITY
+      SUB_TOPIC = TOS_NODE_ID % 3;
+      uint8_t topic = SUB_TOPIC; 
+      if (second_sub && (SUB_TOPIC == 0)) topic = 1; // if subscribed to TEMPERATURE, subscribe also to HUMIDITY
       sendSUB(topic);
 
       call MilliTimer3.startOneShot(10000); // subscribe timeout
@@ -109,6 +110,7 @@ implementation {
       return;
     }
     else {
+      PUB_TOPIC = (TOS_NODE_ID-1) % 3;
       random = (call Random.rand16() % 100);
       sendPUB(PUB_TOPIC, payload, 1);
     }
@@ -137,8 +139,9 @@ implementation {
     }
     else {
       if (TOS_NODE_ID != 1){
+        SUB_TOPIC = TOS_NODE_ID % 3;
         if (sub == FALSE) call MilliTimer2.startOneShot(1000); // try reconnection
-        else if ((TOS_NODE_ID % 3 == 0) && second_sub == FALSE) {
+        else if ((SUB_TOPIC == 0) && second_sub == FALSE) {
           sub = FALSE;
           second_sub = TRUE;
           call MilliTimer2.startOneShot(10000); 
