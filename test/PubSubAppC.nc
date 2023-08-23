@@ -96,9 +96,8 @@ implementation {
     else {
       // each node subscribes to a topic based on his ID
       SUB_TOPIC = TOS_NODE_ID % 3;
-      uint8_t topic = SUB_TOPIC; 
-      if (second_sub && (SUB_TOPIC == 0)) topic = 1; // if subscribed to TEMPERATURE, subscribe also to HUMIDITY
-      sendSUB(topic);
+      if (second_sub && (SUB_TOPIC == 0)) SUB_TOPIC = 1; // if subscribed to TEMPERATURE, subscribe also to HUMIDITY
+      sendSUB(SUB_TOPIC);
 
       call MilliTimer3.startOneShot(10000); // subscribe timeout
     }
