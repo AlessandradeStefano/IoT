@@ -28,7 +28,7 @@ implementation {
   App.MilliTimer2 -> Timer2;
   App.MilliTimer3 -> Timer3;
   App.MilliTimer4 -> Timer4;
-  App.MilliTimer4 -> Timer5;
+  App.MilliTimer5 -> Timer5;
   App.Packet -> AMSenderC;
   App.Random -> RandomC;
 }

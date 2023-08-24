@@ -60,7 +60,7 @@ implementation {
     else {
       call AMControl.start();
 
-      printf("radio fail\n", TOS_NODE_ID);
+      printf("radio fail\n");
       printfflush();
 
     }
