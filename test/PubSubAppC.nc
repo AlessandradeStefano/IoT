@@ -26,7 +26,7 @@ implementation {
   radio_count_msg_t messageQueue[QUEUE_SIZE];
   uint8_t queueFront = 0;
   uint8_t queueRear = 0;
-  bool queueEmpty = true;
+  bool queueEmpty = TRUE;
 
   message_t packet;
 
@@ -209,7 +209,7 @@ implementation {
           // periodically publish to a topic
           call MilliTimer4.startPeriodic(TOS_NODE_ID * 5000);
           call MilliTimer5.startPeriodic(1000);
-          
+
         } else if (rcm_r->messageType == 4) { // receive PUBLISH
 
           printf("PUB: topic %d, payload %d\n", rcm_r->topic, rcm_r->payload);
@@ -316,14 +316,14 @@ implementation {
 
   bool enqueueMessage(radio_count_msg_t msg) {
     if ((queueRear + 1) % QUEUE_SIZE == queueFront) {
-        return false;  // queue is full
+        return FALSE;  // queue is full
     }
 
     messageQueue[queueRear] = msg;
     queueRear = (queueRear + 1) % QUEUE_SIZE;
-    queueEmpty = false;
+    queueEmpty = FALSE;
 
-    return true;
+    return TRUE;
   }
 
   // wait some time between transmissions
@@ -344,7 +344,7 @@ implementation {
             locked = TRUE;
             queueFront = (queueFront + 1) % QUEUE_SIZE;
             if (queueFront == queueRear) {
-                queueEmpty = true;
+                queueEmpty = TRUE;
             }
 
             printf("sending PUB to %d, topic %d, payload %d\n", destination, topic, payload);
