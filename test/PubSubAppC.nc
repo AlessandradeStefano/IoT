@@ -172,6 +172,10 @@ implementation {
           else if (rcm_r->topic == 2) luminosity[sender-2] = 1;
           sendACK(sender, 3);
         } else if (rcm_r->messageType == 4 && connected[sender-1]) { // receive PUBLISH
+          
+          printf("PUB: topic %d, payload %d", rcm_r->topic, rcm_r->payload);
+       	  printfflush();
+
           int i;
           for (i = 0; i < NUM_NODES; i++){
             if ((rcm_r->topic == 0) && temperature[i] == 1) sendPUB(rcm_r->topic, rcm_r->payload, i+2);
@@ -208,7 +212,7 @@ implementation {
           call MilliTimer4.startPeriodic(20000);
         } else if (rcm_r->messageType == 4) { // receive PUBLISH
 
-          printf("received PUB (topic: %d)", rcm_r->topic);
+          printf("PUB: topic %d, payload %d", rcm_r->topic, rcm_r->payload);
        	  printfflush();
           
           call Leds.led0On();
@@ -284,9 +288,6 @@ implementation {
           rcm->destination = destination;
           rcm->topic = topic;
           rcm->payload = payload;
-          
-          printf("sending PUB (topic: %d)\n", topic);
-       	  printfflush();
 
           if (call AMSend.send(destination, &packet, sizeof(radio_count_msg_t)) == SUCCESS) {
             locked = TRUE;
