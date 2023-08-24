@@ -59,7 +59,7 @@ implementation {
     else {
       call AMControl.start();
 
-      printf("radio fail, id %d\n", TOS_NODE_ID);
+      printf("radio fail\n", TOS_NODE_ID);
       printfflush();
 
     }
@@ -205,7 +205,7 @@ implementation {
           printf("PUB: topic %d, payload %d\n", rcm_r->topic, rcm_r->payload);
        	  printfflush();
           
-          call Leds.led0On();
+          call Leds.led0Toggle();On();
           call Leds.led0Off();
         }
         
@@ -279,7 +279,8 @@ implementation {
           rcm->topic = topic;
           rcm->payload = payload;
 
-          printf("%d send PUB to %d, topic %d, payload %d\n", TOS_NODE_ID, destination, topic, payload);
+          printf("sending PUB to %d, topic %d, payload %d\n", TOS_NODE_ID, destination, topic, payload);
+          printfflush();
 
           if (call AMSend.send(destination, &packet, sizeof(radio_count_msg_t)) == SUCCESS) {
             locked = TRUE;

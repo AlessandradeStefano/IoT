@@ -4,7 +4,7 @@
 configuration PubSubAppAppC {}
 implementation {
   components MainC, PubSubAppC as App, LedsC;
-  components PrintfC;
+  components SerialPrintfC;
   components SerialStartC;
   components new AMSenderC(AM_RADIO_COUNT_MSG);
   components new AMReceiverC(AM_RADIO_COUNT_MSG);
