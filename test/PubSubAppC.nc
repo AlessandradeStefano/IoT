@@ -13,6 +13,7 @@ module PubSubAppC {
     interface Timer<TMilli> as MilliTimer2;
     interface Timer<TMilli> as MilliTimer3;
     interface Timer<TMilli> as MilliTimer4;
+    interface Timer<TMilli> as MilliTimer5;
     interface SplitControl as AMControl;
     interface Packet;
     interface Random;
@@ -169,8 +170,14 @@ implementation {
 
           for (i = 0; i < NUM_NODES; i++){
             if ((rcm_r->topic == 0) && temperature[i] == 1) sendPUB(rcm_r->topic, rcm_r->payload, i+2);
+            call MilliTimer5.startOneShot(1500);
+            call Leds.led0Off();
             if ((rcm_r->topic == 1) && humidity[i] == 1) sendPUB(rcm_r->topic, rcm_r->payload, i+2);
+            call MilliTimer5.startOneShot(1500);
+            call Leds.led0Off();
             if ((rcm_r->topic == 2) && luminosity[i] == 1) sendPUB(rcm_r->topic, rcm_r->payload, i+2);
+            call MilliTimer5.startOneShot(1500);
+            call Leds.led0Off();
           }
         }
 
@@ -278,7 +285,7 @@ implementation {
           rcm->topic = topic;
           rcm->payload = payload;
 
-          printf("sending PUB to %d, topic %d, payload %d\n", TOS_NODE_ID, destination, topic, payload);
+          printf("sending PUB to %d, topic %d, payload %d\n", destination, topic, payload);
           printfflush();
 
           if (call AMSend.send(destination, &packet, sizeof(radio_count_msg_t)) == SUCCESS) {
@@ -290,6 +297,11 @@ implementation {
     if (&packet == bufPtr) {
       locked = FALSE;
     }
+  }
+
+  // wait some time between transmissions
+  event void MilliTimer5.fired() {
+    call Leds.led0On();
   }
 
 }

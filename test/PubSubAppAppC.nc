@@ -13,6 +13,7 @@ implementation {
   components new TimerMilliC() as Timer2;
   components new TimerMilliC() as Timer3;
   components new TimerMilliC() as Timer4;
+  components new TimerMilliC() as Timer5;
   components ActiveMessageC;
   components RandomC;
   
@@ -27,6 +28,7 @@ implementation {
   App.MilliTimer2 -> Timer2;
   App.MilliTimer3 -> Timer3;
   App.MilliTimer4 -> Timer4;
+  App.MilliTimer4 -> Timer5;
   App.Packet -> AMSenderC;
   App.Random -> RandomC;
 }
