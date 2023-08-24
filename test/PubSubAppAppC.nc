@@ -15,7 +15,6 @@ implementation {
   components new TimerMilliC() as Timer4;
   components ActiveMessageC;
   components RandomC;
-
   
   App.Boot -> MainC.Boot;
   

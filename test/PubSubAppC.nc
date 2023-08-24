@@ -121,22 +121,13 @@ implementation {
 
   // handle retransmission of connect
   event void MilliTimer1.fired() {
-    if (locked) {
-      return;
-    }
-    else {
       if (TOS_NODE_ID != 1){
         if (connected[TOS_NODE_ID-1] != 1) call MilliTimer0.startOneShot(1000); // try reconnection
       }
-    }
   }
 
   // hande retransmission of subscribe
   event void MilliTimer3.fired() {
-    if (locked) {
-      return;
-    }
-    else {
       if (TOS_NODE_ID != 1){
         SUB_TOPIC = TOS_NODE_ID % 3;
         if (sub == FALSE) call MilliTimer2.startOneShot(1000); // try reconnection
@@ -146,7 +137,6 @@ implementation {
           call MilliTimer2.startOneShot(10000); 
         }
       }
-    }
   }
 
 
@@ -288,6 +278,8 @@ implementation {
           rcm->destination = destination;
           rcm->topic = topic;
           rcm->payload = payload;
+
+          printf("%d send PUB to %d, topic %d, payload %d\n", TOS_NODE_ID, destination, topic, payload);
 
           if (call AMSend.send(destination, &packet, sizeof(radio_count_msg_t)) == SUCCESS) {
             locked = TRUE;
