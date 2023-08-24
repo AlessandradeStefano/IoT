@@ -333,7 +333,7 @@ implementation {
   // wait some time between transmissions
   event void MilliTimer5.fired() {
     if (!queueEmpty) {
-        MessageToSend msg = messageQueue[queueFront];
+        radio_count_msg_t msg = messageQueue[queueFront];
 
         radio_count_msg_t* rcm = (radio_count_msg_t*)call Packet.getPayload(&packet, sizeof(radio_count_msg_t));
         if (rcm == NULL) return;
