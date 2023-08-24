@@ -351,7 +351,7 @@ implementation {
                 queueEmpty = TRUE;
             }
 
-            printf("sending PUB to %d, topic %d, payload %d\n", rcm->destination, topic, payload);
+            printf("sending PUB to %d, topic %d, payload %d\n", rcm->destination, rcm->topic, rcm->payload);
             printfflush();
 
         }
