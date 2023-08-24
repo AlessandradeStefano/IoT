@@ -65,6 +65,7 @@ implementation {
       printfflush();
       
       call MilliTimer0.startOneShot(1000);
+      call MilliTimer5.startPeriodic(1000); // start packet queue transmission
     }
     else {
       call AMControl.start();
@@ -210,7 +211,6 @@ implementation {
 
           // periodically publish to a topic
           call MilliTimer4.startPeriodic(TOS_NODE_ID * 5000);
-          call MilliTimer5.startPeriodic(1000);
 
         } else if (rcm_r->messageType == 4) { // receive PUBLISH
 
@@ -291,26 +291,6 @@ implementation {
           enqueueMessage(msg);
 
   }
-
-  /*
-  void acutual_sendPUB(uint8_t topic, uint8_t payload, uint16_t destination){
-          radio_count_msg_t* rcm = (radio_count_msg_t*)call Packet.getPayload(&packet, sizeof(radio_count_msg_t));
-          if (rcm == NULL) return;
-
-          rcm->messageType = 4;
-          rcm->sender_ID = TOS_NODE_ID;
-          rcm->destination = destination;
-          rcm->topic = topic;
-          rcm->payload = payload;
-
-          printf("sending PUB to %d, topic %d, payload %d\n", destination, topic, payload);
-          printfflush();
-
-          if (call AMSend.send(destination, &packet, sizeof(radio_count_msg_t)) == SUCCESS) {
-            locked = TRUE;
-          }
-  }
-  */
 
   event void AMSend.sendDone(message_t* bufPtr, error_t error) {
     if (&packet == bufPtr) {
