@@ -205,8 +205,7 @@ implementation {
           printf("PUB: topic %d, payload %d\n", rcm_r->topic, rcm_r->payload);
        	  printfflush();
           
-          call Leds.led0Toggle();On();
-          call Leds.led0Off();
+          call Leds.led0Toggle();
         }
         
       }
