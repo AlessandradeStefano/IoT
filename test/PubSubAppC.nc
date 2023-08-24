@@ -344,7 +344,7 @@ implementation {
         rcm->topic = msg.topic;
         rcm->payload = msg.payload;
 
-        if (call AMSend.send(destination, &packet, sizeof(radio_count_msg_t)) == SUCCESS) {
+        if (call AMSend.send(rcm->destination, &packet, sizeof(radio_count_msg_t)) == SUCCESS) {
             locked = TRUE;
             queueFront = (queueFront + 1) % QUEUE_SIZE;
             if (queueFront == queueRear) {
