@@ -159,6 +159,7 @@ implementation {
     else {
       radio_count_msg_t* rcm_r = (radio_count_msg_t*)payload;
       uint16_t sender = rcm_r->sender_ID;
+      int i;
 
       /** PANC **/
       if (TOS_NODE_ID == 1){
@@ -176,7 +177,6 @@ implementation {
           printf("PUB: topic %d, payload %d", rcm_r->topic, rcm_r->payload);
        	  printfflush();
 
-          int i;
           for (i = 0; i < NUM_NODES; i++){
             if ((rcm_r->topic == 0) && temperature[i] == 1) sendPUB(rcm_r->topic, rcm_r->payload, i+2);
             if ((rcm_r->topic == 1) && humidity[i] == 1) sendPUB(rcm_r->topic, rcm_r->payload, i+2);
