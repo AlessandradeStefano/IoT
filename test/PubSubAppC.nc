@@ -174,7 +174,7 @@ implementation {
           sendACK(sender, 3);
         } else if (rcm_r->messageType == 4 && connected[sender-1]) { // receive PUBLISH
           
-          printf("PUB: topic %d, payload %d", rcm_r->topic, rcm_r->payload);
+          printf("PUB: topic %d, payload %d\n", rcm_r->topic, rcm_r->payload);
        	  printfflush();
 
           for (i = 0; i < NUM_NODES; i++){
@@ -209,10 +209,10 @@ implementation {
           call Leds.led2On();
 
           // periodically publish to a topic
-          call MilliTimer4.startPeriodic(20000);
+          call MilliTimer4.startPeriodic(TOS_NODE_ID * 5000);
         } else if (rcm_r->messageType == 4) { // receive PUBLISH
 
-          printf("PUB: topic %d, payload %d", rcm_r->topic, rcm_r->payload);
+          printf("PUB: topic %d, payload %d\n", rcm_r->topic, rcm_r->payload);
        	  printfflush();
           
           call Leds.led0On();
