@@ -51,6 +51,8 @@ implementation {
   void sendCON();
   void sendSUB(uint8_t topic);
   void sendPUB(uint8_t topic, uint8_t payload, uint16_t destination);
+
+  bool enqueueMessage(radio_count_msg_t msg);
   
   event void Boot.booted() {
     call AMControl.start();
@@ -290,6 +292,7 @@ implementation {
 
   }
 
+  /*
   void acutual_sendPUB(uint8_t topic, uint8_t payload, uint16_t destination){
           radio_count_msg_t* rcm = (radio_count_msg_t*)call Packet.getPayload(&packet, sizeof(radio_count_msg_t));
           if (rcm == NULL) return;
@@ -307,6 +310,7 @@ implementation {
             locked = TRUE;
           }
   }
+  */
 
   event void AMSend.sendDone(message_t* bufPtr, error_t error) {
     if (&packet == bufPtr) {
