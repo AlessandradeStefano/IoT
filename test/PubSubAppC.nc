@@ -2,6 +2,8 @@
 #include "PubSubApp.h"
 #include <string.h>
 
+#define QUEUE_SIZE 200
+
 module PubSubAppC {
   uses {
     interface Leds;
@@ -20,6 +22,11 @@ module PubSubAppC {
   }
 }
 implementation {
+ 
+  radio_count_msg_t messageQueue[QUEUE_SIZE];
+  uint8_t queueFront = 0;
+  uint8_t queueRear = 0;
+  bool queueEmpty = true;
 
   message_t packet;
 
@@ -170,14 +177,8 @@ implementation {
 
           for (i = 0; i < NUM_NODES; i++){
             if ((rcm_r->topic == 0) && temperature[i] == 1) sendPUB(rcm_r->topic, rcm_r->payload, i+2);
-            call MilliTimer5.startOneShot(1500);
-            call Leds.led0Off();
             if ((rcm_r->topic == 1) && humidity[i] == 1) sendPUB(rcm_r->topic, rcm_r->payload, i+2);
-            call MilliTimer5.startOneShot(1500);
-            call Leds.led0Off();
             if ((rcm_r->topic == 2) && luminosity[i] == 1) sendPUB(rcm_r->topic, rcm_r->payload, i+2);
-            call MilliTimer5.startOneShot(1500);
-            call Leds.led0Off();
           }
         }
 
@@ -207,6 +208,8 @@ implementation {
 
           // periodically publish to a topic
           call MilliTimer4.startPeriodic(TOS_NODE_ID * 5000);
+          call MilliTimer5.startPeriodic(1000);
+          
         } else if (rcm_r->messageType == 4) { // receive PUBLISH
 
           printf("PUB: topic %d, payload %d\n", rcm_r->topic, rcm_r->payload);
@@ -276,6 +279,18 @@ implementation {
   }
 
   void sendPUB(uint8_t topic, uint8_t payload, uint16_t destination){
+
+          radio_count_msg_t msg;
+          msg.messageType = 4;
+          msg.sender_ID = TOS_NODE_ID;
+          msg.destination = destination;
+          msg.topic = topic;
+          msg.payload = payload;
+          enqueueMessage(msg);
+
+  }
+
+  void acutual_sendPUB(uint8_t topic, uint8_t payload, uint16_t destination){
           radio_count_msg_t* rcm = (radio_count_msg_t*)call Packet.getPayload(&packet, sizeof(radio_count_msg_t));
           if (rcm == NULL) return;
 
@@ -299,9 +314,44 @@ implementation {
     }
   }
 
+  bool enqueueMessage(radio_count_msg_t msg) {
+    if ((queueRear + 1) % QUEUE_SIZE == queueFront) {
+        return false;  // queue is full
+    }
+
+    messageQueue[queueRear] = msg;
+    queueRear = (queueRear + 1) % QUEUE_SIZE;
+    queueEmpty = false;
+
+    return true;
+  }
+
   // wait some time between transmissions
   event void MilliTimer5.fired() {
-    call Leds.led0On();
+    if (!queueEmpty) {
+        MessageToSend msg = messageQueue[queueFront];
+
+        radio_count_msg_t* rcm = (radio_count_msg_t*)call Packet.getPayload(&packet, sizeof(radio_count_msg_t));
+        if (rcm == NULL) return;
+
+        rcm->messageType = 4;
+        rcm->sender_ID = TOS_NODE_ID;
+        rcm->destination = msg.destination;
+        rcm->topic = msg.topic;
+        rcm->payload = msg.payload;
+
+        if (call AMSend.send(destination, &packet, sizeof(radio_count_msg_t)) == SUCCESS) {
+            locked = TRUE;
+            queueFront = (queueFront + 1) % QUEUE_SIZE;
+            if (queueFront == queueRear) {
+                queueEmpty = true;
+            }
+
+            printf("sending PUB to %d, topic %d, payload %d\n", destination, topic, payload);
+            printfflush();
+
+        }
+    }
   }
 
 }
