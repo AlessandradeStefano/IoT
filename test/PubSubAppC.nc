@@ -292,12 +292,6 @@ implementation {
 
   }
 
-  event void AMSend.sendDone(message_t* bufPtr, error_t error) {
-    if (&packet == bufPtr) {
-      locked = FALSE;
-    }
-  }
-
   bool enqueueMessage(radio_count_msg_t msg) {
     if ((queueRear + 1) % QUEUE_SIZE == queueFront) {
         return FALSE;  // queue is full
@@ -335,6 +329,12 @@ implementation {
             printfflush();
 
         }
+    }
+  }
+
+  event void AMSend.sendDone(message_t* bufPtr, error_t error) {
+    if (&packet == bufPtr) {
+      locked = FALSE;
     }
   }
 
